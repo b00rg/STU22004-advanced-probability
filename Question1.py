@@ -36,7 +36,6 @@ for delta_t in delta_ts:
         "delta_t": delta_t,
         "probability": probability,
         "max_temp": max_temperature,
-        "last_temp": temperature  # Pass final state to the next iteration
     })
 
 # Display results
