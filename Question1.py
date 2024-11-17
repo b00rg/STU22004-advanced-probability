@@ -2,47 +2,71 @@ from math import sqrt
 import numpy as np
 import matplotlib.pyplot as plt
 
-number_of_steps = 0.0
-sigma = 0.2 #volatility
-delta_ts = [0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001,0.00000001, 0.000000001] # time increments 
-num_simulations = 100
-time = 1 
+# Define parameters
+sigma = 1  # volatility
+time = 1  # total simulation time
+delta_ts = [0.01, 0.009, 0.008, 0.007, 0.006, 0.005, 0.004, 0.003, 0.002, 0.001, 0.0005, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001]  # step sizes
 
-# Lists to hold the results for table and plot
+# Initialize tracking variables
+results = []  # To store probability and max temperature for each delta_t
 probabilities = []
 max_temperatures = []
-
-for delta in delta_ts:
-    temperature = 0.0 # starting temperature at 0
-    above_zero_count = 0.0 # track how many times temp is above 0
-    num_steps = int(1 / delta) # change delta_ts index for different values 
+# Start the simulation
+for delta_t in delta_ts:
+    num_steps = int(time / delta_t)  # Total steps for this delta_t
+    temperature = 0.0 if not results else results[-1]['last_temp']  # Continue from last state
     max_temperature = -float('inf')
-    for _ in range(num_steps): 
-        Z = np.random.standard_normal()  
-        temperature_change = sigma*sqrt(delta)*Z  # this is based off a stochastic process. change delta_ts[x] for different time increments
-        temperature += temperature_change 
+    above_zero_count = 0.0
+
+    for step in range(num_steps):
+        Z = np.random.standard_normal()  # Random variable for simulation
+        temperature_change = sigma * sqrt(delta_t) * Z
+        temperature += temperature_change
+
         if temperature > 0.0:
             above_zero_count += 1.0
         if temperature > max_temperature:
             max_temperature = temperature
-    p = above_zero_count/float(num_steps) 
-    print(f"P for delta_ts = {delta} is: {p}") 
-    probabilities.append(p)
-    max_temperatures.append(max_temperature)
-    print(f"Max temperature is {max_temperature}")
 
-plt.figure(figsize=(12, 6))
-plt.subplot(1, 2, 1)
+    # Store results for this delta_t
+    probability = above_zero_count / num_steps
+    probabilities.append(probability)
+    max_temperatures.append(max_temperature)
+    results.append({
+        "delta_t": delta_t,
+        "probability": probability,
+        "max_temp": max_temperature,
+        "last_temp": temperature  # Pass final state to the next iteration
+    })
+
+# Display results
+for result in results:
+    print(
+        f"Delta_t: {result['delta_t']:.4f}, Probability: {result['probability']:.4f}, "
+        f"Max Temperature: {result['max_temp']:.4f}"
+    )
+
+
+# Plot 1: Probability vs Time Step (Delta_t)
+plt.subplot(1, 3, 1)
 plt.plot(delta_ts, probabilities, marker='o', linestyle='-', color='b')
 plt.xlabel('Delta_t (Time Step)')
 plt.ylabel('Probability (P)')
 plt.title('Probability vs Time Step (Delta_t)')
 
-plt.subplot(1, 2, 2)
+# Plot 2: Max Temperature vs Time Step (Delta_t)
+plt.subplot(1, 3, 2)
 plt.plot(delta_ts, max_temperatures, marker='o', linestyle='-', color='r')
 plt.xlabel('Delta_t (Time Step)')
 plt.ylabel('Max Temperature')
 plt.title('Max Temperature vs Time Step (Delta_t)')
+
+# Plot 3: Max Temperature vs Probability (P)
+plt.subplot(1, 3, 3)
+plt.plot(probabilities, max_temperatures, marker='o', linestyle='-', color='g')
+plt.xlabel('Probability (P)')
+plt.ylabel('Max Temperature')
+plt.title('Max Temperature vs Probability')
 
 # Show the plots
 plt.tight_layout()
