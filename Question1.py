@@ -14,7 +14,7 @@ max_temperatures = []
 # Start the simulation
 for delta_t in delta_ts:
     num_steps = int(time / delta_t)  # Total steps for this delta_t
-    temperature = 0.0 if not results else results[-1]['last_temp']  # Continue from last state
+    temperature = 0.0   # Continue from last state
     max_temperature = -float('inf')
     above_zero_count = 0.0
 
