@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Parameters
 sigma = 1  # volatility
 time = 1  # total simulation time
-delta_ts = [0.00001,0.000001]  # step sizes to experiment with
+delta_ts = [0.001, 0.0001, 0.00001, 0.000001]  # step sizes to experiment with
 num_simulations = 1000  # number of Monte Carlo simulations
 
 # Initialize results
