@@ -96,28 +96,3 @@ def graph_match(a,b,n):
     plt.legend()
     plt.show()
     return result
-
-def graph_match(a,b,n):
-    avg_shots_a = data.loc[a].iloc[1]
-    avg_shots_b = data.loc[b].iloc[1]
-    
-    save_a=data.loc[a].iloc[4]
-    save_b=data.loc[b].iloc[4]
-    
-    result=[0.0, 0.0,""]
-    
-    for i in range(0,n):
-        shots_a = np.random.poisson(avg_shots_a)
-        shots_b = np.random.poisson(avg_shots_b)
-        
-        score_a = float(shots_a*(1-save_b))
-        score_b = float(shots_b*(1-save_a))
-        
-        result[0]=result[0]+score_a/n
-        result[1]=result[1]+score_b/n
-        
-    if(result[0]>result[1]):
-        result[2]=a
-    else: result[2]=b
-            
-    return result
