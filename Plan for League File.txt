@@ -1,0 +1,7 @@
+Plan for League File
+
+Step 1: Create league function which imports the csv file.
+Step 2: Simulate a match. Use John's match function to simulate the match.
+Step 3: Assign the value according to results. win +3, tie +1, loss +0
+Step 4: Loop this for all teams playing each other twice (home and away)
+Step 5: Once league is finished, find the winner name in the csv file.
