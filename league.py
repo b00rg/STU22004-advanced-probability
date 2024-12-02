@@ -1,18 +1,19 @@
-import numpy as np;
-import pandas as pd;
+import numpy as np
+import pandas as pd
 
-data=pd.read_csv("Book1.csv",index_col="Stat name");
+data=pd.read_csv("Book1.csv",index_col="Stat name")
 
-NUMBER_OF_TEAMS = 20;
-NUMBER_OF_MATCHES_SIMULATED = 10;
+NUMBER_OF_TEAMS = 20
+NUMBER_OF_MATCHES_SIMULATED = 100
 
-# John's match function (idk how inheritance works in python yet so i'm just doing this for now)
+# John's match function (changed to allow for ties)
+
 def match(a,b,reps):
-    avg_shots_a = data.loc[a].iloc[1];
-    avg_shots_b = data.loc[b].iloc[1];
+    avg_shots_a = data.loc[a].iloc[1]
+    avg_shots_b = data.loc[b].iloc[1]
     
-    save_a=data.loc[a].iloc[4];
-    save_b=data.loc[b].iloc[4];
+    save_a=data.loc[a].iloc[4]
+    save_b=data.loc[b].iloc[4]
     
     result=[0.0, 0.0,""]
     
@@ -25,22 +26,24 @@ def match(a,b,reps):
         
         result[0]=result[0]+score_a/reps
         result[1]=result[1]+score_b/reps
-        
-    if(result[0]>result[1]):
-        result[2]=a
-    else: result[2]=b
-    
+
     result[0] = round(result[0])
     result[1] = round(result[1])
+
+    if(result[0]>result[1]): result[2]=a
+    elif(result[0]<result[1]): result[2]=b
+    else: result[2]="Tie"
         
     return result
 
-def league():
-    teamScores = np.zeros(NUMBER_OF_TEAMS)
-    print("Results of Each Match:")
-    for i in range(0,NUMBER_OF_TEAMS-1):
-        for j in range(i+1,NUMBER_OF_TEAMS-1):
-            matchResult=match(i,j,NUMBER_OF_MATCHES_SIMULATED)
+teamScores = [0] * NUMBER_OF_TEAMS
+teams = data.index.tolist()
+print("Results of Each Match:")
+for i in range(0,NUMBER_OF_TEAMS-1):
+    for j in range(i+1,NUMBER_OF_TEAMS-1):
+        homeAndAway=False
+        while homeAndAway==False:
+            matchResult=match(teams[i],teams[j],NUMBER_OF_MATCHES_SIMULATED)
             print(matchResult)
             if(matchResult[0] > matchResult[1]):
                 teamScores[i]+=3
@@ -49,12 +52,13 @@ def league():
             else:
                 teamScores[i]+=1
                 teamScores[j]+=1
+            homeAndAway=True
     
-    print("Results of Each Team: ")
-    predictedChampionAndScore=["",0]
-    for i in range(0,NUMBER_OF_TEAMS-1):
-        print(data[i][0]+": "+teamScores[i])
-        if(predictedChampionAndScore[1]<teamScores[i]):
-            predictedChampionAndScore=[data[i][0],teamScores[i]]
+print("\nResults of Each Team:")
+predictedChampionAndScore=["",0]
+for i in range(0,NUMBER_OF_TEAMS-1):
+    print(teams[i]+": ",teamScores[i])
+    if(predictedChampionAndScore[1]<teamScores[i]):
+        predictedChampionAndScore=[teams[i],teamScores[i]]
 
-    print("Premiere League Predicted Champion: "+predictedChampionAndScore[0])
+print("\nPremiere League Predicted Champion: "+predictedChampionAndScore[0])
